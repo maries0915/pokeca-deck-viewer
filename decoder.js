@@ -1,33 +1,36 @@
+function decodeDeck(code) {
+  // Base64URL → Uint8Array
+  const base64 = code.replace(/-/g, "+").replace(/_/g, "/");
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+
+  // zlib 展開
+  const jsonText = new TextDecoder().decode(pako.inflate(bytes));
+
+  // JSON 解析
+  return JSON.parse(jsonText);
+}
+
 function show() {
   const code = document.getElementById("deck").value.trim();
-  const output = document.getElementById("result");
-  output.textContent = "";
+  const out = document.getElementById("result");
+  out.textContent = "";
 
   if (!code) return;
 
-  const iframe = document.createElement("iframe");
-  iframe.style.display = "none";
-  iframe.src = "https://www.pokemon-card.com/deck/confirm.html";
+  try {
+    const deck = decodeDeck(code);
 
-  iframe.onload = () => {
-    try {
-      const win = iframe.contentWindow;
+    const lines = deck.cards.map(c => {
+      return `${c.card_name} ×${c.num}`;
+    });
 
-      // 公式のデッキデコード関数を呼ぶ
-      const deck = win.DeckCode.decode(code);
+    out.textContent = lines.join("\n");
 
-      const lines = deck.map(c => {
-        return `${c.card_name} ×${c.num}`;
-      });
-
-      output.textContent = lines.join("\n");
-      document.body.removeChild(iframe);
-
-    } catch (e) {
-      output.textContent = "デコード失敗（公式仕様変更の可能性あり）";
-      document.body.removeChild(iframe);
-    }
-  };
-
-  document.body.appendChild(iframe);
+  } catch (e) {
+    out.textContent = "デコード失敗（無効なデッキコード）";
+  }
 }
