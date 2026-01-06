@@ -2,16 +2,26 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ポケカ デッキコード表示</title>
+  <style>
+    body { font-family: system-ui; padding: 20px; }
+    input { width: 100%; font-size: 16px; padding: 8px; }
+    button { margin-top: 10px; padding: 6px 14px; }
+    pre { margin-top: 20px; white-space: pre-wrap; }
+  </style>
 </head>
 <body>
-  <h2>デッキコード</h2>
-  <input id="deck" style="width:100%" placeholder="デッキコードを貼ってね">
-  <button onclick="show()">表示</button>
-  <pre id="result"></pre>
 
-  <script src="cardDB.js"></script>
-  <script src="decoder.js"></script>
+<h1>デッキコード</h1>
+
+<input id="deck" placeholder="デッキコードを入力">
+<br>
+<button onclick="show()">表示</button>
+
+<pre id="result"></pre>
+
+<script src="pako.min.js"></script>
+<script src="decoder.js"></script>
+
 </body>
 </html>
