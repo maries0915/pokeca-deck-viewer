@@ -30,12 +30,6 @@ function decodeDeck(code) {
 }
 
 // ===== 仮カードDB（次ステップで拡張）=====
-const cardDB = {
-  "SV8-117": "サーフゴーex",
-  "SV7-024": "コレクレー",
-  "SV7-025": "コレクレー",
-  "SV8-118": "ゲンガーex"
-};
 
 // ===== 表示 =====
 function show() {
