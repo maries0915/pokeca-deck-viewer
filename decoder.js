@@ -36,6 +36,14 @@ function show() {
   const code = document.getElementById("deck").value.trim();
   const cards = decodeDeck(code);
 
-  document.getElementById("result").textContent =
+  const lines = cards.map(c => {
+    const name = cardDB[c.id];
+    return name
+      ? `${name} ×${c.count}`
+      : `【未登録】${c.id} ×${c.count}`;
+  });
+
+  document.getElementById("result").textContent = lines.join("\n");
+}
     cards.map(c => `${cardDB[c.id] ?? c.id} ×${c.count}`).join("\n");
 }
