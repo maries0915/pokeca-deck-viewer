@@ -1,17 +1,56 @@
+/*!
+ * Pokeca Deck Code Decoder
+ * https://github.com/otiai10/pokeca-deck-decoder
+ * MIT License
+ */
+
+const BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+
 function decodeDeck(code) {
-  // Base64URL → Uint8Array
-  const base64 = code.replace(/-/g, "+").replace(/_/g, "/");
-  const binary = atob(base64);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
+  const bytes = [];
+  let buffer = 0;
+  let bits = 0;
+
+  for (const c of code) {
+    const v = BASE64.indexOf(c);
+    if (v < 0) continue;
+    buffer = (buffer << 6) | v;
+    bits += 6;
+    if (bits >= 8) {
+      bits -= 8;
+      bytes.push((buffer >> bits) & 0xff);
+    }
   }
 
-  // zlib 展開
-  const jsonText = new TextDecoder().decode(pako.inflate(bytes));
+  let i = 0;
+  const read = (n) => {
+    let v = 0;
+    for (let b = 0; b < n; b++) {
+      const byte = bytes[Math.floor(i / 8)];
+      const bit = 7 - (i % 8);
+      v = (v << 1) | ((byte >> bit) & 1);
+      i++;
+    }
+    return v;
+  };
 
-  // JSON 解析
-  return JSON.parse(jsonText);
+  const cards = [];
+  const cardCount = read(8);
+
+  for (let c = 0; c < cardCount; c++) {
+    const num = read(4);
+    const series = read(8);
+    const number = read(12);
+
+    cards.push({
+      series,
+      number,
+      num,
+      id: `SV${series}-${String(number).padStart(3, "0")}`
+    });
+  }
+
+  return cards;
 }
 
 function show() {
@@ -22,15 +61,11 @@ function show() {
   if (!code) return;
 
   try {
-    const deck = decodeDeck(code);
-
-    const lines = deck.cards.map(c => {
-      return `${c.card_name} ×${c.num}`;
-    });
-
-    out.textContent = lines.join("\n");
-
+    const cards = decodeDeck(code);
+    out.textContent = cards
+      .map(c => `${c.id} ×${c.num}`)
+      .join("\n");
   } catch (e) {
-    out.textContent = "デコード失敗（無効なデッキコード）";
+    out.textContent = "デコード失敗";
   }
 }
