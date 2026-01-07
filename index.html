@@ -2,25 +2,28 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>ポケカ デッキコード表示</title>
+  <title>ポケカ デッキ整理ツール</title>
   <style>
-    body { font-family: system-ui; padding: 20px; }
-    input { width: 100%; font-size: 16px; padding: 8px; }
-    button { margin-top: 10px; padding: 6px 14px; }
-    pre { margin-top: 20px; white-space: pre-wrap; }
+    body { font-family: system-ui; padding: 16px; }
+    textarea, input { width: 100%; font-size: 15px; margin-top: 8px; }
+    button { margin-top: 10px; padding: 8px 14px; }
+    pre { white-space: pre-wrap; background: #f6f6f6; padding: 10px; }
   </style>
 </head>
 <body>
 
-<h1>デッキコード</h1>
+<h2>① デッキコード</h2>
+<input id="deckcode" placeholder="デッキコードを入力">
+<button onclick="openOfficial()">公式デッキ確認ページを開く</button>
 
-<input id="deck" placeholder="デッキコードを入力">
-<br>
-<button onclick="show()">表示</button>
+<h2>② 公式ページのカード一覧を貼り付け</h2>
+<textarea id="raw" rows="10" placeholder="公式ページのカードリストをすべてコピーして貼る"></textarea>
+<button onclick="parse()">整理する</button>
 
+<h2>③ 整理済みデッキ（AI・共有用）</h2>
 <pre id="result"></pre>
+<button onclick="copy()">一括コピー</button>
 
-<script src="decoder.js"></script>
-
+<script src="parser.js"></script>
 </body>
 </html>
